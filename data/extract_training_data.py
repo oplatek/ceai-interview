@@ -7,18 +7,20 @@ all functions assumes dataset in memory for simplicity
 """
 import argparse
 import re
+import string
 
 
 def remove_empty_rows(text):
-    pass
+    return "\n".join([ll.rstrip() for ll in text.splitlines() if ll.strip()])
 
 
-def remote_punctuations(text):
-    pass
+def remove_punctuations(text):
+    translator = str.maketrans('', '', string.punctuation)
+    return text.translate(translator)
 
 
 def lowercase(text):
-    pass
+    return text.lower()
 
 
 def max_one_sentence_per_line(text):
@@ -74,5 +76,6 @@ if __name__ == "__main__":
     with open(args.raw_dataset, 'r') as r, open(args.norm_input, 'w') as inp, open(args.norm_output, 'w') as outp:
         raw_text = r.read()
         one_sents = max_one_sentence_per_line(raw_text)
-        inp.write(one_sents)
-        outp.write(one_sents)
+        norm_one_sents = lowercase(remove_punctuations(remove_empty_rows(one_sents)))
+        inp.write(norm_one_sents)
+        outp.write(norm_one_sents)
