@@ -8,6 +8,7 @@ all functions assumes dataset in memory for simplicity
 import argparse
 import re
 import string
+import unicodedata
 
 
 def remove_empty_rows(text):
@@ -66,6 +67,12 @@ def max_one_sentence_per_line(text):
     return '\n'.join(split_into_sentences(text))
 
 
+def remove_accents(text):
+    return "".join(aChar
+                   for aChar in unicodedata.normalize("NFD", text)
+                   if not unicodedata.combining(aChar))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('raw_dataset')
@@ -77,5 +84,5 @@ if __name__ == "__main__":
         raw_text = r.read()
         one_sents = max_one_sentence_per_line(raw_text)
         norm_one_sents = lowercase(remove_punctuations(remove_empty_rows(one_sents)))
-        inp.write(norm_one_sents)
+        inp.write(remove_accents(norm_one_sents))
         outp.write(norm_one_sents)
